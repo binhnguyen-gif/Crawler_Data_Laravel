@@ -16,8 +16,10 @@ class CreateStoriesTable extends Migration
         Schema::create('stories', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('image');
-            $table->string('info');
+            $table->text('image')->nullable();
+            $table->text('link');
+            $table->integer('chapter')->nullable();
+            $table->text('info')->nullable();
             $table->longText('description');
             $table->timestamps();
         });

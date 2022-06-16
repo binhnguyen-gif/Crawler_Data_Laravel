@@ -16,7 +16,7 @@ class InsertChapter extends Command
      *
      * @var string
      */
-    protected $signature = 'chapter:insert {link} {stories_id}';
+    protected $signature = 'chapter:insert {link?} {stories_id?}';
 
     /**
      * The console command description.
@@ -42,10 +42,9 @@ class InsertChapter extends Command
      */
     public function handle()
     {
-//        return 0;
         $chapter_link = $this->argument('link');
         $ids = $this->argument('stories_id');
-        $this->id  = (int)$ids;
+        $this->id = (int)$ids;
         $crawler = GoutteFacade::request('GET', $chapter_link);
         $linkChapter = $crawler->filter('ul.list-chapter li')->each(
             function ($node) {
@@ -65,9 +64,14 @@ class InsertChapter extends Command
         );
         if (!empty($linkChapter)) {
             $this->table(
-                ['title', 'link', 'description'],
-                Chapter::query()->select('title', 'link', 'description')->get()->toArray()
+                ['title', 'link'],
+                Chapter::query()->select('title', 'link')->limit(15)->get()->toArray()
             );
+            $practice = $this->ask('Bạn muốn đọc chapter nào?');
+            if (!empty($practice)) {
+                $tap = Chapter::query()->where('id', $practice)->select('description')->first();
+                print($tap->description);
+            }
         }
     }
 }
